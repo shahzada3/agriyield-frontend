@@ -999,5 +999,43 @@ function predictRotation(event) {
         console.log('%cPowered by Ensemble Learning AI | BBD University', 'color: #4a7c23; font-size: 14px;');
         console.log('%cEmpowering farmers with data-driven insights', 'color: #666; font-size: 12px;');
     </script>
+    <!-- Your frontend’s content and elements go here -->
+
+    <!-- JS backend connection -->
+    <script>
+    /*
+     🌾 AgriYield Frontend Connection
+     Automatically selects the correct backend (local vs cloud)
+    */
+    const API_URL = (function () {
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            return "http://localhost:5000";
+        }
+        return "https://agriyield-backend.onrender.com";
+    })();
+
+    console.log("✅ Using API endpoint:", API_URL);
+
+    async function sendPrediction(endpoint, payload) {
+        try {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            console.log("✅ Response:", data);
+            return data;
+        } catch (err) {
+            console.error("❌ Prediction request failed:", err);
+            alert("Server connection failed. Please try again later.");
+            return null;
+        }
+    }
+    </script>
+</body>
+</html>
+
 </body>
 </html>
