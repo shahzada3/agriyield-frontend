@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>AgriYield+ | Professional Agriculture Intelligence Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-        /* (Styles unchanged from original A5.html to preserve design) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #2d5016;
@@ -58,12 +56,12 @@
         .section-title { font-family:'Playfair Display', serif; font-size:42px; font-weight:700; color:var(--primary); margin-bottom:20px; }
         .section-subtitle { font-size:18px; color:#666; line-height:1.8; }
         .services-grid { 
-    max-width:1400px; 
-    margin:0 auto; 
-    display:grid; 
-    grid-template-columns:repeat(3,1fr); 
-    gap:35px; 
-}
+            max-width:1400px; 
+            margin:0 auto; 
+            display:grid; 
+            grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); 
+            gap:35px; 
+        }
         .service-card { background:white; border:1px solid var(--border); border-radius:16px; padding:40px; transition: all 0.4s; cursor:pointer; position:relative; overflow:hidden; }
         .service-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transition: transform 0.4s; }
         .service-card:hover::before { transform: scaleX(1); }
@@ -256,6 +254,17 @@
                     Learn More →
                 </a>
 </div>
+<div class="service-card" onclick="openModal('crop')">
+<div class="service-icon">🌱</div>
+<h3 class="service-title">Crop Recommendation</h3>
+<p class="service-desc">
+                    AI-powered crop selection based on soil N-P-K levels and pH. Get the best crop 
+                    recommendations for your soil conditions with 90%+ accuracy.
+                </p>
+<a class="service-link" href="#" onclick="event.preventDefault()">
+                    Learn More →
+                </a>
+</div>
 <div class="service-card">
 <div class="service-icon">📡</div>
 <h3 class="service-title">IoT Monitoring</h3>
@@ -279,15 +288,15 @@
                 </a>
 </div>
 <div class="service-card" onclick="openModal('rotation')">
-    <div class="service-icon">🔄</div>
-    <h3 class="service-title">Crop Rotation Planning</h3>
-    <p class="service-desc">
-        AI-powered crop rotation recommendations to restore soil health, reduce pest pressure, 
-        and optimize nutrient cycles for sustainable farming.
-    </p>
-    <a class="service-link" href="#" onclick="event.preventDefault()">
-        Learn More →
-    </a>
+<div class="service-icon">🔄</div>
+<h3 class="service-title">Crop Rotation Planning</h3>
+<p class="service-desc">
+                    AI-powered crop rotation recommendations to restore soil health, reduce pest pressure, 
+                    and optimize nutrient cycles for sustainable farming.
+                </p>
+<a class="service-link" href="#" onclick="event.preventDefault()">
+                    Learn More →
+                </a>
 </div>
 </div>
 </div>
@@ -305,7 +314,10 @@
 <div class="weather-grid" id="weather-display" style="display: none;"></div>
 </div>
 </div>
-<!-- Modals -->
+
+<!-- MODALS -->
+
+<!-- Yield Prediction Modal -->
 <div class="modal" id="yield-modal">
 <div class="modal-content">
 <button class="modal-close" onclick="closeModal('yield')">×</button>
@@ -356,6 +368,8 @@
 <div id="yield-results"></div>
 </div>
 </div>
+
+<!-- Fertilizer Modal -->
 <div class="modal" id="fertilizer-modal">
 <div class="modal-content">
 <button class="modal-close" onclick="closeModal('fertilizer')">×</button>
@@ -404,6 +418,8 @@
 <div id="fert-results"></div>
 </div>
 </div>
+
+<!-- Irrigation Modal -->
 <div class="modal" id="irrigation-modal">
 <div class="modal-content">
 <button class="modal-close" onclick="closeModal('irrigation')">×</button>
@@ -451,6 +467,8 @@
 <div id="irr-results"></div>
 </div>
 </div>
+
+<!-- Disease Detection Modal -->
 <div class="modal" id="disease-modal">
 <div class="modal-content">
 <button class="modal-close" onclick="closeModal('disease')">×</button>
@@ -472,57 +490,90 @@
 <div id="disease-results"></div>
 </div>
 </div>
-<div class="modal" id="rotation-modal">
-    <div class="modal-content">
-        <button class="modal-close" onclick="closeModal('rotation')">×</button>
-        <h2 class="modal-title">Crop Rotation Planning</h2>
-        <form onsubmit="predictRotation(event)">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Previous Crop</label>
-                    <select class="form-select" id="rot-last-crop" required>
-                        <option value="wheat">Wheat</option>
-                        <option value="rice">Rice</option>
-                        <option value="maize">Maize</option>
-                        <option value="cotton">Cotton</option>
-                        <option value="soybean">Soybean</option>
-                        <option value="chickpea">Chickpea</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Soil Nitrogen (N) ppm</label>
-                    <input class="form-input" id="rot-n" type="number" required value="60"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Soil Phosphorus (P) ppm</label>
-                    <input class="form-input" id="rot-p" type="number" required value="45"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Soil Potassium (K) ppm</label>
-                    <input class="form-input" id="rot-k" type="number" required value="55"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Soil Health Score (40-100)</label>
-                    <input class="form-input" id="rot-health" type="number" min="40" max="100" required value="70"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Previous Yield (ton/ha)</label>
-                    <input class="form-input" id="rot-yield" type="number" step="0.1" required value="3.5"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Seasons Growing Same Crop</label>
-                    <input class="form-input" id="rot-seasons" type="number" min="1" max="6" required value="2"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Organic Matter (%)</label>
-                    <input class="form-input" id="rot-organic" type="number" step="0.1" required value="3.0"/>
-                </div>
-            </div>
-            <button class="submit-btn" type="submit">Get Rotation Plan</button>
-        </form>
-        <div id="rotation-results"></div>
-    </div>
+
+<!-- Crop Recommendation Modal (NEW) -->
+<div class="modal" id="crop-modal">
+<div class="modal-content">
+<button class="modal-close" onclick="closeModal('crop')">×</button>
+<h2 class="modal-title">Crop Recommendation</h2>
+<form onsubmit="predictCrop(event)">
+<div class="form-grid">
+<div class="form-group">
+<label class="form-label">Nitrogen (N) ppm</label>
+<input class="form-input" id="crop-n" type="number" required value="50"/>
 </div>
+<div class="form-group">
+<label class="form-label">Phosphorus (P) ppm</label>
+<input class="form-input" id="crop-p" type="number" required value="40"/>
+</div>
+<div class="form-group">
+<label class="form-label">Potassium (K) ppm</label>
+<input class="form-input" id="crop-k" type="number" required value="45"/>
+</div>
+<div class="form-group">
+<label class="form-label">Soil pH</label>
+<input class="form-input" id="crop-ph" type="number" step="0.1" min="0" max="14" required value="6.5"/>
+</div>
+</div>
+<button class="submit-btn" type="submit">Get Crop Recommendation</button>
+</form>
+<div id="crop-results"></div>
+</div>
+</div>
+
+<!-- Crop Rotation Modal -->
+<div class="modal" id="rotation-modal">
+<div class="modal-content">
+<button class="modal-close" onclick="closeModal('rotation')">×</button>
+<h2 class="modal-title">Crop Rotation Planning</h2>
+<form onsubmit="predictRotation(event)">
+<div class="form-grid">
+<div class="form-group">
+<label class="form-label">Previous Crop</label>
+<select class="form-select" id="rot-last-crop" required>
+<option value="wheat">Wheat</option>
+<option value="rice">Rice</option>
+<option value="maize">Maize</option>
+<option value="cotton">Cotton</option>
+<option value="soybean">Soybean</option>
+<option value="chickpea">Chickpea</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">Soil Nitrogen (N) ppm</label>
+<input class="form-input" id="rot-n" type="number" required value="60"/>
+</div>
+<div class="form-group">
+<label class="form-label">Soil Phosphorus (P) ppm</label>
+<input class="form-input" id="rot-p" type="number" required value="45"/>
+</div>
+<div class="form-group">
+<label class="form-label">Soil Potassium (K) ppm</label>
+<input class="form-input" id="rot-k" type="number" required value="55"/>
+</div>
+<div class="form-group">
+<label class="form-label">Soil Health Score (40-100)</label>
+<input class="form-input" id="rot-health" type="number" min="40" max="100" required value="70"/>
+</div>
+<div class="form-group">
+<label class="form-label">Previous Yield (ton/ha)</label>
+<input class="form-input" id="rot-yield" type="number" step="0.1" required value="3.5"/>
+</div>
+<div class="form-group">
+<label class="form-label">Seasons Growing Same Crop</label>
+<input class="form-input" id="rot-seasons" type="number" min="1" max="6" required value="2"/>
+</div>
+<div class="form-group">
+<label class="form-label">Organic Matter (%)</label>
+<input class="form-input" id="rot-organic" type="number" step="0.1" required value="3.0"/>
+</div>
+</div>
+<button class="submit-btn" type="submit">Get Rotation Plan</button>
+</form>
+<div id="rotation-results"></div>
+</div>
+</div>
+
 <footer id="contact">
 <div class="footer-grid">
 <div class="footer-section">
@@ -536,7 +587,7 @@
 <li><a href="#">Fertilizer Optimization</a></li>
 <li><a href="#">Smart Irrigation</a></li>
 <li><a href="#">Disease Detection</a></li>
-<li><a href="#">IoT Monitoring</a></li>
+<li><a href="#">Crop Recommendation</a></li>
 </ul>
 </div>
 <div class="footer-section">
@@ -550,7 +601,8 @@
 </ul>
 </div>
 <div class="footer-section">
-<h3>Contact</h3><div class="contact-entry">👩‍💼 Susmita Yadav — CEO, AgriYield Corporation</div>
+<h3>Contact</h3>
+<div class="contact-entry">👩‍💼 Susmita Yadav – CEO, AgriYield Corporation</div>
 <ul>
 <li>BBD University</li>
 <li>Lucknow, India</li>
@@ -563,8 +615,9 @@
 <p>© 2025 AgriYield+ | All Rights Reserved | Powered by Ensemble Learning AI</p>
 </div>
 </footer>
+
 <script>
-        // Keep the 3D background scene (three.js) and navigation behavior from original file
+        // 3D Background Animation
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ 
@@ -600,6 +653,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // Modal Functions
         function openModal(type) {
             document.getElementById(type + '-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -628,7 +682,7 @@
             });
         });
 
-        // Weather fetching (unchanged)
+        // Weather Fetching
         async function fetchWeather() {
             const city = document.getElementById('weather-city').value.trim();
             const display = document.getElementById('weather-display');
@@ -694,20 +748,15 @@
             }
         });
 
-        // ----------------------
-        // Universal API-integrated prediction functions + renderer
-        // ----------------------
-    const API_URL = (function(){
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        // when running locally
-        return 'http://localhost:5000';
-    }
-    // when running from Vercel / any public site
-    return 'https://agriyield-backend.onrender.com';
-})();
+        // API Configuration
+        const API_URL = (function(){
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return 'http://localhost:5000';
+            }
+            return 'https://agriyield-backend.onrender.com';
+        })();
 
-
-        // Generic POST + render function
+        // Universal API Call Function
         async function callModelEndpoint(endpoint, payload, resultContainerId) {
             const results = document.getElementById(resultContainerId);
             results.innerHTML = '<div class="loader"><div class="spinner"></div><p style="color: var(--primary);">Contacting model API...</p></div>';
@@ -735,7 +784,7 @@
             }
         }
 
-        // Universal renderer - inspects json.outputs and displays appropriately
+        // Universal Response Renderer
         function renderModelResponse(json, containerId) {
             const container = document.getElementById(containerId);
             const headerTitle = (json.summary || 'Prediction Results');
@@ -750,37 +799,14 @@
                         <div class="result-card">
                             <div class="result-icon">${pickIconFor(out.label)}</div>
                             <div class="result-value">${formatScalar(out)}</div>
-                            <div class="result-label">${out.label || ''}${out.units ? ' — ' + out.units : ''}</div>
+                            <div class="result-label">${out.label || ''}${out.units ? ' – ' + out.units : ''}</div>
                         </div>`;
-                } else if (out.type === 'image') {
-                    const src = sanitizeImageSource(out.value);
-                    html += `
-                        <div class="result-card" style="grid-column: 1/-1; text-align:center;">
-                            <img src="${src}" style="max-width:100%; border-radius:12px; max-height:360px;" alt="${out.label || 'image'}" />
-                            <div class="result-label" style="margin-top:10px;">${out.label || 'Image'}</div>
-                        </div>`;
-                } else if (out.type === 'chart') {
-                    const uid = 'chart-' + Math.random().toString(36).slice(2,9);
-                    html += `
-                        <div class="result-card" style="grid-column: 1/-1;">
-                            <canvas id="${uid}" width="800" height="300" style="max-width:100%;"></canvas>
-                            <div class="result-label" style="margin-top:10px;">${out.label || 'Chart'}</div>
-                        </div>`;
-                    setTimeout(()=>{ drawChart(uid, out); }, 60);
                 } else if (out.type === 'list') {
                     html += `<div class="result-card" style="grid-column:1/-1;"><h4 class="rec-title">${out.label || 'List'}</h4>`;
                     (Array.isArray(out.value) ? out.value : [out.value]).forEach(item => {
                         html += `<div class="rec-item"><div class="rec-icon">📌</div><span>${escapeHtml(String(item))}</span></div>`;
                     });
                     html += `</div>`;
-                } else if (out.type === 'table') {
-                    html += `<div class="result-card" style="grid-column:1/-1; overflow:auto;"><h4 class="rec-title">${out.label || 'Table'}</h4>`;
-                    html += renderTableHtml(out.value);
-                    html += `</div>`;
-                } else if (out.type === 'object') {
-                    html += `<div class="result-card" style="grid-column:1/-1;"><h4 class="rec-title">${out.label || 'Details'}</h4><pre style="white-space:pre-wrap; font-size:13px;">${escapeHtml(JSON.stringify(out.value, null, 2))}</pre></div>`;
-                } else {
-                    html += `<div class="result-card" style="grid-column:1/-1;"><pre style="white-space:pre-wrap;">${escapeHtml(JSON.stringify(out, null, 2))}</pre></div>`;
                 }
             });
 
@@ -799,69 +825,41 @@
             Object.keys(copy).forEach(k=>{ outputs.push({type: guessType(copy[k]), label: k, value: copy[k]}); });
             return outputs;
         }
+
         function guessType(val) {
             if (val === null) return 'text';
             if (typeof val === 'number') return 'scalar';
-            if (typeof val === 'string') {
-                if (val.startsWith('data:image/') || val.startsWith('http')) return 'image';
-                return 'text';
-            }
+            if (typeof val === 'string') return 'text';
             if (Array.isArray(val)) return 'list';
             if (typeof val === 'object') return 'object';
             return 'text';
         }
-        function formatScalar(out) { if (out.units) return `${out.value} ${out.units}`; return escapeHtml(String(out.value)); }
-        function sanitizeImageSource(val) {
-            if (!val) return '';
-            if (val.startsWith('data:image/') || val.startsWith('http')) return val;
-            if (/^[A-Za-z0-9+/=]+$/.test(val)) return 'data:image/png;base64,' + val;
-            return val;
+
+        function formatScalar(out) { 
+            if (out.units) return `${out.value} ${out.units}`; 
+            return escapeHtml(String(out.value)); 
         }
-        function renderTableHtml(tabular) {
-            if (!Array.isArray(tabular)) return `<pre>${escapeHtml(JSON.stringify(tabular, null, 2))}</pre>`;
-            if (tabular.length === 0) return '<div>(empty)</div>';
-            if (typeof tabular[0] === 'object' && !Array.isArray(tabular[0])) {
-                const cols = Object.keys(tabular[0]);
-                let html = '<table style="width:100%; border-collapse:collapse;">';
-                html += '<thead><tr>';
-                cols.forEach(c => html += `<th style="text-align:left; padding:8px; border-bottom:1px solid #eee;">${escapeHtml(c)}</th>`);
-                html += '</tr></thead><tbody>';
-                tabular.forEach(row=>{ html += '<tr>'; cols.forEach(c => html += `<td style="padding:8px; border-bottom:1px solid #f5f5f5;">${escapeHtml(String(row[c] ?? ''))}</td>`); html += '</tr>'; });
-                html += '</tbody></table>';
-                return html;
-            }
-            let html = '<table style="width:100%; border-collapse:collapse;">';
-            tabular.forEach(row => { html += '<tr>'; (Array.isArray(row) ? row : [row]).forEach(cell => { html += `<td style="padding:8px; border-bottom:1px solid #f5f5f5;">${escapeHtml(String(cell))}</td>`; }); html += '</tr>'; });
-            html += '</table>';
-            return html;
+
+        function escapeHtml(unsafe) { 
+            return unsafe.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); 
         }
-        function escapeHtml(unsafe) { return unsafe.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+
         function pickIconFor(label) {
             if (!label) return '🔎';
             label = label.toLowerCase();
             if (label.includes('water') || label.includes('mm')) return '💦';
-            if (label.includes('cost') || label.includes('₹') || label.includes('rupee') || label.includes('cost')) return '💰';
+            if (label.includes('cost') || label.includes('₹') || label.includes('rupee')) return '💰';
             if (label.includes('confidence')) return '🎯';
-            if (label.includes('status')) return '📝';
-            if (label.includes('disease')) return '🦠';
+            if (label.includes('status')) return '📊';
+            if (label.includes('disease') || label.includes('crop')) return '🌱';
+            if (label.includes('nitrogen') || label.includes(' n ')) return '🔬';
+            if (label.includes('phosphorus') || label.includes(' p ')) return '⚗️';
+            if (label.includes('potassium') || label.includes(' k ')) return '🧪';
+            if (label.includes('ph')) return '🔬';
             return '🔎';
         }
-        function drawChart(canvasId, out) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            if (window.Chart && out.data) {
-                const ctx = canvas.getContext('2d');
-                try {
-                    new Chart(ctx, { type: out.chartType || 'line', data: out.data, options: out.options || {responsive:true, maintainAspectRatio:false} });
-                    return;
-                } catch (e) {
-                    console.warn('Chart.js draw error', e);
-                }
-            }
-            canvas.parentNode.innerHTML = `<div style="padding:20px;">Chart placeholder — include Chart.js for visual preview.<pre>${escapeHtml(JSON.stringify(out.data, null,2))}</pre></div>`;
-        }
 
-        // Convenience wrappers for the three ML modules (fertilizer, irrigation, rotation)
+        // Prediction Functions
         function predictYield(event) {
             event.preventDefault();
             const payload = {
@@ -887,7 +885,6 @@
                 soil: document.getElementById('fert-soil').value,
                 area: parseFloat(document.getElementById('fert-area').value)
             };
-            // This endpoint maps to your Fertilizer model
             callModelEndpoint('predict/fertilizer', payload, 'fert-results');
         }
 
@@ -898,28 +895,38 @@
                 temperature: parseFloat(document.getElementById('irr-temp').value),
                 humidity: parseFloat(document.getElementById('irr-humidity').value),
                 rainfall: parseFloat(document.getElementById('irr-rainfall').value),
-                crop: document.getElementById('irr-crop').value,
+                crop: document.getElementById('irr-crop').value),
                 stage: document.getElementById('irr-stage').value
             };
-            // This endpoint maps to your Irrigation model
             callModelEndpoint('predict/irrigation', payload, 'irr-results');
         }
 
-function predictRotation(event) {
-    event.preventDefault();
-    const payload = {
-        previous_crop: document.getElementById('rot-last-crop').value,
-        soil_N: parseFloat(document.getElementById('rot-n').value),
-        soil_P: parseFloat(document.getElementById('rot-p').value),
-        soil_K: parseFloat(document.getElementById('rot-k').value),
-        soil_health_score: parseFloat(document.getElementById('rot-health').value),
-        previous_yield: parseFloat(document.getElementById('rot-yield').value),
-        seasons_same_crop: parseInt(document.getElementById('rot-seasons').value),
-        organic_matter: parseFloat(document.getElementById('rot-organic').value)
-    };
-    callModelEndpoint('predict/rotation', payload, 'rotation-results');
-}
-        // Disease detection uses multipart/form-data (image upload)
+        function predictCrop(event) {
+            event.preventDefault();
+            const payload = {
+                N: parseFloat(document.getElementById('crop-n').value),
+                P: parseFloat(document.getElementById('crop-p').value),
+                K: parseFloat(document.getElementById('crop-k').value),
+                ph: parseFloat(document.getElementById('crop-ph').value)
+            };
+            callModelEndpoint('predict/crop', payload, 'crop-results');
+        }
+
+        function predictRotation(event) {
+            event.preventDefault();
+            const payload = {
+                previous_crop: document.getElementById('rot-last-crop').value,
+                soil_N: parseFloat(document.getElementById('rot-n').value),
+                soil_P: parseFloat(document.getElementById('rot-p').value),
+                soil_K: parseFloat(document.getElementById('rot-k').value),
+                soil_health_score: parseFloat(document.getElementById('rot-health').value),
+                previous_yield: parseFloat(document.getElementById('rot-yield').value),
+                seasons_same_crop: parseInt(document.getElementById('rot-seasons').value),
+                organic_matter: parseFloat(document.getElementById('rot-organic').value)
+            };
+            callModelEndpoint('predict/rotation', payload, 'rotation-results');
+        }
+
         async function detectDisease() {
             const file = document.getElementById('disease-image').files[0];
             const symptoms = document.getElementById('symptoms').value.trim();
@@ -944,8 +951,9 @@ function predictRotation(event) {
             }
         }
 
-        // Page utilities: nav links and scroll effects (unchanged)
+        // Page Load & Navigation
         window.addEventListener('load', () => { fetchWeather(); });
+        
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
@@ -958,7 +966,10 @@ function predictRotation(event) {
                 }
             });
         });
-        document.getElementById('weather-city').addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchWeather(); });
+        
+        document.getElementById('weather-city').addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') fetchWeather(); 
+        });
 
         let lastScroll = 0;
         window.addEventListener('scroll', () => {
@@ -999,43 +1010,5 @@ function predictRotation(event) {
         console.log('%cPowered by Ensemble Learning AI | BBD University', 'color: #4a7c23; font-size: 14px;');
         console.log('%cEmpowering farmers with data-driven insights', 'color: #666; font-size: 12px;');
     </script>
-    <!-- Your frontend’s content and elements go here -->
-
-    <!-- JS backend connection -->
-    <script>
-    /*
-     🌾 AgriYield Frontend Connection
-     Automatically selects the correct backend (local vs cloud)
-    */
-    const API_URL = (function () {
-        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-            return "http://localhost:5000";
-        }
-        return "https://agriyield-backend.onrender.com";
-    })();
-
-    console.log("✅ Using API endpoint:", API_URL);
-
-    async function sendPrediction(endpoint, payload) {
-        try {
-            const response = await fetch(`${API_URL}${endpoint}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            console.log("✅ Response:", data);
-            return data;
-        } catch (err) {
-            console.error("❌ Prediction request failed:", err);
-            alert("Server connection failed. Please try again later.");
-            return null;
-        }
-    }
-    </script>
-</body>
-</html>
-
 </body>
 </html>
