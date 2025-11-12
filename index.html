@@ -895,7 +895,7 @@
                 temperature: parseFloat(document.getElementById('irr-temp').value),
                 humidity: parseFloat(document.getElementById('irr-humidity').value),
                 rainfall: parseFloat(document.getElementById('irr-rainfall').value),
-                crop: document.getElementById('irr-crop').value),
+                crop: document.getElementById('irr-crop').value,
                 stage: document.getElementById('irr-stage').value
             };
             callModelEndpoint('predict/irrigation', payload, 'irr-results');
